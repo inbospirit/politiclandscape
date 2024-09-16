@@ -6,7 +6,12 @@ const Home = () => {
     <div>
       <h1>Welcome to the Homepage!</h1>
       <p>This is the home page of your site where you can add more content later.</p>
-      <Link to="/login">Inicia Sesion</Link>
+      
+      {/* Enlace al login */}
+      <p><Link to="/login">Inicia Sesion</Link></p>
+
+      {/* Enlace al registro */}
+      <p><Link to="/register">Regístrate aquí</Link></p> 
     </div>
   );
 };

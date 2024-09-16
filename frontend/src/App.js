@@ -6,6 +6,7 @@ import Logout from './components/Logout';
 import Home from './components/Home';
 import ProtectedRoute from './components/ProtectedRoute';
 import Register from './components/Register';
+import DreamTeam from './components/DreamTeam'; // Importa el nuevo componente
 
 const Dashboard = () => <h2>Dashboard (Protected)</h2>;
 
@@ -34,6 +35,15 @@ const App = () => {
             element={
               <ProtectedRoute isAuthenticated={isAuthenticated}>
                 <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          {/* Añade la ruta protegida para el Dream Team */}
+          <Route
+            path="/dreamteam"
+            element={
+              <ProtectedRoute isAuthenticated={isAuthenticated}>
+                <DreamTeam />
               </ProtectedRoute>
             }
           />
