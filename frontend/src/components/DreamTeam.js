@@ -1,6 +1,7 @@
+// components/DreamTeam.js
 import React, { useState } from 'react';
-import Search from './Search';
-import RoleList from './RoleList';
+import Search from './Search'; // Fixed import path
+import RoleList from './RoleList'; // Fixed import path
 
 const DreamTeam = () => {
   const [roles, setRoles] = useState({
