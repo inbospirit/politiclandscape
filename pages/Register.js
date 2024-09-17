@@ -1,47 +1,52 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux'; // Dispatch from Redux for handling user state
-import { loginUser } from '../frontend/src/actions/authActions'; // Action to log the user in after registration
-import { useRouter } from 'next/router'; // Using Next.js router for redirection
+import { useDispatch } from 'react-redux'; // Redux dispatch for login action
+import { loginUser } from '../redux/actions/authActions'; // Updated path for the login action
+import { useRouter } from 'next/router'; // Next.js router for navigation
 
 const Register = () => {
-  // State to manage input values for username and password
+  // State to manage form inputs
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  
-  // Optional: State to manage loading while registration request is being processed
-  const [loading, setLoading] = useState(false);
-  
-  // Use Redux dispatch to handle login actions
-  const dispatch = useDispatch();
-  
-  // Use Next.js router for navigation
-  const router = useRouter();
+  const [loading, setLoading] = useState(false); // Manage loading state
+  const [error, setError] = useState(''); // State to manage error messages
 
-  // Function to handle form submission for registration
+  const dispatch = useDispatch(); // Redux dispatch
+  const router = useRouter(); // Next.js router for navigation
+
+  // Handle form submission
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent default form submission behavior
-    setLoading(true); // Set loading to true while waiting for response
+    e.preventDefault(); // Prevent form submission refresh
+    setLoading(true); // Set loading to true while processing
+    setError(''); // Clear any previous errors
 
-    // Make a POST request to the backend for user registration
-    const response = await fetch('http://localhost:4000/auth/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ username, password }), // Send username and password in the body
-    });
+    try {
+      // Send registration request to backend
+      const response = await fetch('http://localhost:4000/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }), // Pass username and password
+      });
 
-    const data = await response.json();
-    setLoading(false); // Stop loading once response is received
+      const data = await response.json();
+      setLoading(false); // Stop loading once the response is received
 
-    // If registration is successful, log the user in and redirect them
-    if (data.status === 'Usuario registrado') {
-      alert('Usuario registrado con éxito'); // Show success alert
-      dispatch(loginUser(username, password)); // Dispatch login action for auto-login
-      localStorage.setItem('token', data.token); // Save the JWT token in localStorage
-      router.push('/dreamteam'); // Redirect to the dream team page
-    } else {
-      alert(data.error); // Show error alert if registration fails
+      // If registration is successful
+      if (data.status === 'Usuario registrado') {
+        // Show success message
+        alert('Usuario registrado con éxito');
+        dispatch(loginUser(username, password)); // Auto-login after registration
+        localStorage.setItem('token', data.token); // Store the token in localStorage
+        router.push('/dreamteam'); // Redirect to DreamTeam page
+      } else {
+        // If registration fails, show error
+        setError(data.error || 'Error al registrar usuario');
+      }
+    } catch (err) {
+      // Catch any errors from the fetch call
+      setLoading(false);
+      setError('Error de servidor. Inténtalo de nuevo más tarde.');
     }
   };
 
@@ -55,6 +60,7 @@ const Register = () => {
           placeholder="Nombre de usuario"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
+          required
         />
         {/* Input field for password */}
         <input
@@ -62,16 +68,21 @@ const Register = () => {
           placeholder="Contraseña"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          required
         />
         {/* Submit button, disabled while loading */}
         <button type="submit" disabled={loading}>
           {loading ? 'Registrando...' : 'Registrarse'}
         </button>
       </form>
+
+      {/* Display error message */}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
     </div>
   );
 };
 
 export default Register;
+
 
 
